@@ -1,0 +1,19 @@
+<%- include('./partials/visitantHeader')%>
+<br>
+<br>
+<div class="container">
+    <h1>Login</h1>
+    <form method="post" action="/auth">
+        <label>CPF ou CNPJ</label>
+        <input class="form-control" type="text" name="cpfCnpj">
+        <br>
+        <label>Senha</label>
+        <input class="form-control" type="password" name="password">
+        <br>
+        <button class="btn btn-primary form-control" type="submit">Entrar</button>
+        <br><br>
+        <% if(errorMsg){ %>
+            <p style="color:red">⚠️ <%=errorMsg%></p>
+        <% } %>
+    </form>
+</div>

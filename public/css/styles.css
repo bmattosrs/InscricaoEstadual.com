@@ -1,0 +1,21 @@
+.resultados {
+    border: 0.5px solid rgba(232, 232, 232, 0.256) ;
+    border-radius: 5px;
+    margin-bottom: 25px;
+}
+
+.square-box{
+    min-width: 600px;
+}
+
+.bordas{
+    border: 1px solid rgba(141, 141, 141, 0.256) ;
+    border-radius: 5px;
+    margin-bottom: 25px;
+
+}
+
+.uf-flag{
+    display:inline-block;
+    max-width: 50px;
+}

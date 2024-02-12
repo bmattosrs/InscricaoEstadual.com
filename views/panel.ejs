@@ -1,0 +1,75 @@
+<%- include('./partials/loggedHeader')%>
+<br>
+<br>
+<div class="container">
+    <h1>Seja bem-vindo, <%= userName %></h1>
+    <br>
+    <br>
+    <div class="card">
+        <h4 class="card-header" id="api">Definições da API</h4>
+        <div class="card-body">
+            <label class="form-label">Sua chave da API</label>
+            <input class="form-control" type="text" name="apiKey" value="<%= userApiKey %>" readonly>
+            <br>
+            <button class="btn btn-primary"><i class="fa-solid fa-book"></i> Documentação da API<i class="bi-copy"></i></button>
+            <button class="btn btn-primary"><i class="fa-solid fa-key"></i> Gerar nova Chave<i class="bi-copy"></i></button>
+        </div>
+    </div>
+    <br><br>
+    <div class="card">
+        <h4 class="card-header">Créditos</h4>
+        <div class="card-body"> 
+            <p>Saldo Atual: <b>R$ <%= userBalance %></b></p>
+            <p>Você ainda tem <%= userBalanceUnity %> consultas restantes</p>
+            <div class="form-label" id="formAddCredit">
+                <label class="form-label">Adicionar Saldo R$</label>
+                <input type="hidden" name="cpfCnpj" id="cpfCnpj" value="<%= userDoc %>">
+                <input type="hidden" name="asaasId" id="asaasId" value="<%= userAsaasCode %>">
+                <input type="text" placeholder="Outro valor" name="valueCredit" id="valueCredit">
+                <button class="btn btn-primary" onclick="addBalance()">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Gerar link de pagamento
+                </button>
+            </div>
+        </div>
+        <br>
+        <br>
+        <h5 class="card-header">Pedidos</h5>
+        <div class="card-body">
+            <% userOrders.forEach(order => { %>
+                <p><%= order.value %> - <%= order.invoiceUrl %> - <%= order.status %> <i class="fa-solid fa-trash"></i></p><br>
+            <% }) %>
+        </div>
+    </div>
+
+  
+
+</div>
+
+<script>
+    function addBalance(){
+
+        let valueCredit = document.getElementById('valueCredit').value;
+        let asaasId = document.getElementById('asaasId').value;
+
+        axios.post('http://localhost:3000/addBalance',{
+            valueCredit: valueCredit,
+            asaasId: asaasId
+        }).then((response) => {
+            if(response.status==200){
+                let formAddCredit = document.getElementById('formAddCredit');
+
+                let botaoResposta = document.createElement('a');
+                botaoResposta.setAttribute('href', response.data);
+                botaoResposta.setAttribute('target', '_blank');
+                botaoResposta.innerHTML = '<button class="btn btn-success">Link da Fatura</button>';
+
+                formAddCredit.appendChild(botaoResposta);
+            }else{
+                console.log('Deu B.O mas AXIOS retornou');
+            }
+        }).catch((err) => {
+            console.log(err.message);
+        })
+    };
+</script>
+<%- include('./partials/footer') %>
