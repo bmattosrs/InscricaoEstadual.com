@@ -22,14 +22,13 @@
             <div id="resultadosBox" style="min-height: 150px"></div>
             </br>
             </br>
-            <hr>
-                <p style="text-align: center"><b>Consulta gratuita e sem limites aqui no site.</b></p>
-                </br>
-                <p style="text-align: center">Quer implementar no seu e-commerce ou projeto?</br>Utilize nossa <a href="/">API</a>, a partir de R$0,05 por consulta com sucesso.</p>
+            <div class="text-center">
+              <a href="https://loja.certidoc.com.br" target="_blank"><img class="mb-5" src="./img/certificado-digital-com-desconto.gif"></a>
             </div>
-
-
+                <p style="text-align: center"><b>Consulta gratuita e sem limites aqui no site.</b></p>
+            </div>
     </div>
+
 
 
 </body>
@@ -45,8 +44,8 @@
 
 async function buscaIe(){
 
-  //Criando e limpando o conteúdo da caixa nome
-  let caixaNome = document.getElementById('nomeBox');
+    //Criando e limpando o conteúdo da caixa nome
+    let caixaNome = document.getElementById('nomeBox');
   caixaNome.innerHTML = "";
 
   //Criando e limpando conteúdo da DIV mãe
@@ -58,22 +57,32 @@ async function buscaIe(){
   let elementoIe = "";
   let subDivi = "";
 
-  let cnpj = (document.getElementById('cnpj').value).replace(/\D/g, "");
+  try{
 
-  await axios.post('http://localhost:3000/cnpjfront',{cnpj: cnpj})
-  .then((res)=>{
+    let cnpj = (document.getElementById('cnpj').value).replace(/\D/g, "");
 
-    if(res.Status = 200){
-      let resultados = res.data;
-        
-        caixaResultado.setAttribute('class','square-box d-flex justify-content-center align-items-center');
+    let resultados = await axios.post('http://localhost:3333/cnpjfront',{cnpj: cnpj});
+    console.log(resultados);
 
-        elementoNome = document.createElement('h4');
-        elementoNome.setAttribute('style','text-align: center');
-        elementoNome.innerHTML = `✅${resultados.name}`;
-        caixaNome.appendChild(elementoNome);
+    if (resultados.data.rfbSituacaoCadastral != 2){
+      throw new Error('CNPJ encontrado, porém empresa não parece estar ATIVA na Receita Federal');
+    }
+    
+    caixaResultado.setAttribute('class','square-box d-flex justify-content-center align-items-center');
 
-        resultados.inscricao.forEach((resultado)=> {
+    elementoNome = document.createElement('h4');
+    elementoNome.setAttribute('style','text-align: center');
+    elementoNome.innerHTML = `✅${resultados.data.rfbRazaoSocial}`;
+    caixaNome.appendChild(elementoNome);
+
+    if (resultados.data.inscricoes < 1) {
+      elementoIe = document.createElement('div');
+      elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
+      elementoIe.innerHTML = `Não encontramos nenhuma <b>Inscrição Estadual</b> Encontrada para esse CNPJ`;
+      caixaResultado.appendChild(elementoIe);
+    }
+
+    for await(const resultado of resultados.data.inscricoes) {
           
           //Construíndo DIV filho que vai conter BANDEIRA + INSCRIÇÃO
           subDivi = document.createElement('div');
@@ -93,29 +102,45 @@ async function buscaIe(){
           elementoIe.innerHTML = `Inscrição Estadual ${resultado.ieUf} encontrada: <b>${resultado.ieNumber}</b>`;
           subDivi.appendChild(elementoIe);
           console.log('sucesso');
-    });
+    };
 
-    }
-  })
-  .catch((err)=> {
+  }catch(err){
+    let erroDescricao = '';
 
-    if(err.Status = 404){
-      
-      elementoIe = document.createElement('p');
-      elementoIe.setAttribute('style','text-align: center;font-size: 18px')
-      elementoIe.innerHTML = '🚫 Nenhuma Inscrição Estadual encontrada para esse CNPJ';
-      
-      caixaResultado.appendChild(elementoIe);
-      console.log('erro')
-    }else{
-      console.log('Erro interno: '+err.message);
+    if (err.response){
+      console.log(err)
+      if (err.response.status == 400){
+      erroDescricao = 'CNPJ não encontrado';
+      } else {
+        erroDescricao = err.response.data;
+      }
     }
 
-  });
+    if (err.request){
+
+      if(err.request.status == 400){
+      erroDescricao = 'CNPJ não encontrado';
+      } else{
+      erroDescricao = err.request
+      }
+    }
+
+    else{
+      console.log(err)
+      erroDescricao = err.message
+    }
+
+    elementoIe = document.createElement('p');
+    elementoIe.setAttribute('style','text-align: center;font-size: 18px')
+    elementoIe.innerHTML = `🚫 ${erroDescricao}`;
+      
+    caixaResultado.appendChild(elementoIe);
+  }
+
 }
 
 //máscara CNPJ
-$('#cnpj').mask('00.000.000/0000-00');
+$('#cnpj').mask('00.000.000/0000-00', {'translation': {0: {pattern: /[0-9]/}}});
 
 </script>
 

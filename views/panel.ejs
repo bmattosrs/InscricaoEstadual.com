@@ -51,7 +51,7 @@
         let valueCredit = document.getElementById('valueCredit').value;
         let asaasId = document.getElementById('asaasId').value;
 
-        axios.post('http://localhost:3000/addBalance',{
+        axios.post('http://localhost:3333/addBalance',{
             valueCredit: valueCredit,
             asaasId: asaasId
         }).then((response) => {

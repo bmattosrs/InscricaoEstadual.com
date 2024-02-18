@@ -3,6 +3,13 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 require('dotenv').config();
+//const cors = require('cors');
+
+//LISTA A RESPECTIVA INSCRIÇÃO ESTADUAL via *Frontend*
+//const corsOptions = {
+//   origin: 'http://146.190.56.238',
+//    methods: ['POST'],
+//};
 
 //IMPORTANDO MODEL DO BANCO
 const connection = require('./database/database');

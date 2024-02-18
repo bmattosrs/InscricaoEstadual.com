@@ -8,6 +8,10 @@ const Inscricao = connection.define('inscricao', {
         allowNull: false,
         primaryKey: true
     },
+    cnpj: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     ieUf:{
         type: Sequelize.STRING,
         allowNull: false
@@ -18,7 +22,8 @@ const Inscricao = connection.define('inscricao', {
     }
 });
 
-Empresa.hasMany(Inscricao,{foreignKey: 'cnpj', as: 'inscricao'});
+//Inscricao.sync({force:true});
+//Empresa.hasMany(Inscricao,{foreignKey: 'cnpj', as: 'inscricao'});
 //Inscricao.belongsTo(Empresa);
 
 
