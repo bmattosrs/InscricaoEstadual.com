@@ -44,8 +44,8 @@
 
 async function buscaIe(){
 
-    //Criando e limpando o conteúdo da caixa nome
-    let caixaNome = document.getElementById('nomeBox');
+  //Criando e limpando o conteúdo da caixa nome
+  let caixaNome = document.getElementById('nomeBox');
   caixaNome.innerHTML = "";
 
   //Criando e limpando conteúdo da DIV mãe
@@ -62,47 +62,60 @@ async function buscaIe(){
     let cnpj = (document.getElementById('cnpj').value).replace(/\D/g, "");
 
     let resultados = await axios.post('http://localhost:3333/cnpjfront',{cnpj: cnpj});
-    console.log(resultados);
+  
+      if (resultados.data.rfbSituacaoCadastral !== 2){
+        throw new Error('CNPJ encontrado, porém empresa não parece estar ATIVA na Receita Federal');
+      }
 
-    if (resultados.data.rfbSituacaoCadastral != 2){
-      throw new Error('CNPJ encontrado, porém empresa não parece estar ATIVA na Receita Federal');
-    }
-    
-    caixaResultado.setAttribute('class','square-box d-flex justify-content-center align-items-center');
+      caixaResultado.setAttribute('class','square-box d-flex justify-content-center align-items-center');
 
-    elementoNome = document.createElement('h4');
-    elementoNome.setAttribute('style','text-align: center');
-    elementoNome.innerHTML = `✅${resultados.data.rfbRazaoSocial}`;
-    caixaNome.appendChild(elementoNome);
+      //Cria nome da empresa
+      elementoNome = document.createElement('h4');
+      elementoNome.setAttribute('style','text-align: center');
+      elementoNome.innerHTML = `✅${resultados.data.rfbRazaoSocial}`;
+      caixaNome.appendChild(elementoNome);
 
-    if (resultados.data.inscricoes < 1) {
-      elementoIe = document.createElement('div');
-      elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
-      elementoIe.innerHTML = `Não encontramos nenhuma <b>Inscrição Estadual</b> Encontrada para esse CNPJ`;
-      caixaResultado.appendChild(elementoIe);
-    }
+      //Se ainda não suportamos esse estado
+      if (resultados.data.statusEstado.compatibilidade == "false") {
+        elementoIe = document.createElement('div');
+        elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
+        elementoIe.innerHTML = `Esse CNPJ pertence a uma empresa de(o) <b>${resultados.data.statusEstado.nome_estado}</b>, ainda não compatível com esse site.<br>Considere fazer uma busca no site do <a href="${resultados.data.statusEstado.link_pesquisa}">SEFAZ ${resultados.data.statusEstado.sigla}</a>`;
+        caixaResultado.appendChild(elementoIe);
+      }
 
-    for await(const resultado of resultados.data.inscricoes) {
-          
-          //Construíndo DIV filho que vai conter BANDEIRA + INSCRIÇÃO
-          subDivi = document.createElement('div');
-          subDivi.setAttribute('class','form-control resultados d-flex justify-content-center align-items-center');
-          caixaResultado.appendChild(subDivi);
 
-          //Construindo bandeira do estado
-          elementoUf = document.createElement('div');
-          //elementoUf.setAttribute('src',`./img/icons-states/${resultado.ieuf}.svg`);
-          elementoUf.setAttribute('class','col 1 d-flex uf-flag', 'title', `${resultado.ieuf}`);
-          elementoUf.innerHTML = `<img width="40px" src="./img/icons-states/${resultado.ieuf}.svg">`;
-          subDivi.appendChild(elementoUf);
+      // Se nenhuma inscrição estadual foi encontrada
+      if (resultados.data.statusEstado.compatibilidade == "true" && resultados.data.inscricoes < 1) {
+        elementoIe = document.createElement('div');
+        elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
+        elementoIe.innerHTML = `Não encontramos nenhuma <b>Inscrição Estadual</b> Encontrada para esse CNPJ`;
+        caixaResultado.appendChild(elementoIe);
+      }
 
-          //Construíndo inscrição estadual
-          elementoIe = document.createElement('div');
-          elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
-          elementoIe.innerHTML = `Inscrição Estadual ${resultado.ieuf} encontrada: <b>${resultado.ienumber}</b>`;
-          subDivi.appendChild(elementoIe);
-          console.log('sucesso');
-    };
+
+    // Se inscrições foram trazidas, esse loop vai populá-las no front
+      for await(const resultado of resultados.data.inscricoes) {
+            console.log('Entrei no loop de inscricoes');
+            //Construíndo DIV filho que vai conter BANDEIRA + INSCRIÇÃO
+            subDivi = document.createElement('div');
+            subDivi.setAttribute('class','form-control resultados d-flex justify-content-center align-items-center');
+            caixaResultado.appendChild(subDivi);
+
+            //Construindo bandeira do estado
+            elementoUf = document.createElement('div');
+            //elementoUf.setAttribute('src',`./img/icons-states/${resultado.ieuf}.svg`);
+            elementoUf.setAttribute('class','col 1 d-flex uf-flag', 'title', `${resultado.ieuf}`);
+            elementoUf.innerHTML = `<img width="40px" src="./img/icons-states/${resultado.ieuf}.svg">`;
+            subDivi.appendChild(elementoUf);
+
+            //Construíndo inscrição estadual
+            elementoIe = document.createElement('div');
+            elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
+            elementoIe.innerHTML = `Inscrição Estadual ${resultado.ieuf} encontrada: <b>${resultado.ienumber}</b>`;
+            subDivi.appendChild(elementoIe);
+            console.log('sucesso');
+      };
+
 
   }catch(err){
     let erroDescricao = '';

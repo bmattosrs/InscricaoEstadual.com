@@ -5,6 +5,7 @@ const Empresa = require('./Empresa');
 const Inscricao = require('./Inscricao');
 const authApi = require('../middlewares/authApi');
 const debitRequest = require('../users/UsersController').debitRequest;
+const estados = require('./compatibilidade.json');
 
 
 router.post('/cnpjfront',(req, res) => {
@@ -16,6 +17,8 @@ router.post('/cnpjfront',(req, res) => {
             axios.get(`https://minhareceita.org/${cnpjInjected}`)
             .then(companyReturned => {
 
+                let compatibilidade = estados.find( uf => uf.sigla == companyReturned.data.uf);
+
                 Inscricao.findAll({
                     where: {
                         cnpj: cnpjInjected
@@ -25,6 +28,12 @@ router.post('/cnpjfront',(req, res) => {
                     let resultado = {
                         rfbRazaoSocial: companyReturned.data.razao_social,
                         rfbSituacaoCadastral: companyReturned.data.situacao_cadastral,
+                        statusEstado: {
+                            sigla: compatibilidade.sigla,
+                            nome_estado:compatibilidade.nome_estado,
+                            link_pesquisa:compatibilidade.link_pesquisa,
+                            compatibilidade: compatibilidade.compatibilidade
+                        },
                         inscricoes: results
                     }
 
