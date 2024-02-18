@@ -67,7 +67,7 @@ async function buscaIe(){
         throw new Error('CNPJ encontrado, porém empresa não parece estar ATIVA na Receita Federal');
       }
 
-      caixaResultado.setAttribute('class','square-box d-flex justify-content-center align-items-center');
+      caixaResultado.setAttribute('class','square-box justify-content-center align-items-center');
 
       //Cria nome da empresa
       elementoNome = document.createElement('h4');
@@ -79,7 +79,7 @@ async function buscaIe(){
       if (resultados.data.statusEstado.compatibilidade == "false") {
         elementoIe = document.createElement('div');
         elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
-        elementoIe.innerHTML = `Esse CNPJ pertence a uma empresa de(o) <b>${resultados.data.statusEstado.nome_estado}</b>, ainda não compatível com esse site.<br>Considere fazer uma busca no site do <a href="${resultados.data.statusEstado.link_pesquisa}">SEFAZ ${resultados.data.statusEstado.sigla}</a>`;
+        elementoIe.innerHTML = `Esse CNPJ pertence a uma empresa de(o) <b>${resultados.data.statusEstado.nome_estado}</b>, ainda não compatível com esse site.<br>Considere fazer uma busca no site do <a href="${resultados.data.statusEstado.link_pesquisa}">SEFAZ ${resultados.data.statusEstado.sigla}</a>.<br>Caso a empresa possua inscrições em outros estados compatíveis com o nosso site, esses serão listados a seguir:<br><br>`;
         caixaResultado.appendChild(elementoIe);
       }
 

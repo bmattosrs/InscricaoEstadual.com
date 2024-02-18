@@ -33,6 +33,6 @@ const User = connection.define('users', {
     }
 });
 
-User.sync();
+//User.sync();
 
 module.exports = User;
