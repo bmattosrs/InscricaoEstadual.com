@@ -3,20 +3,19 @@ const connection = require('../database/database');
 const Empresa = require('./Empresa');
 
 const Inscricao = connection.define('inscricao', {
-    ieNumber: {
+    ienumber: {
         type: Sequelize.STRING, //7 NÚMEROS
         allowNull: false,
-        primaryKey: true
     },
     cnpj: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    ieUf:{
+    ieuf:{
         type: Sequelize.STRING,
         allowNull: false
     },
-    ieActive: {
+    ieactive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
     }

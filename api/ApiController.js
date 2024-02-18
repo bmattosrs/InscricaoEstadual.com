@@ -48,7 +48,7 @@ router.get('/api/cnpj/:cnpj', authApi, (req, res) => {
 router.post('/api/ie',(req,res) =>{
     var {ie,cnpj,status} = req.body;
     StateNumber.create({
-        ieNumber: ie,
+        ienumber: ie,
         cnpjId: cnpj,
         active: parseInt(status)
     }).then(()=> {

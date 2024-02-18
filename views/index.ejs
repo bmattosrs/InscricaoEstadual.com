@@ -91,15 +91,15 @@ async function buscaIe(){
 
           //Construindo bandeira do estado
           elementoUf = document.createElement('div');
-          //elementoUf.setAttribute('src',`./img/icons-states/${resultado.ieUf}.svg`);
-          elementoUf.setAttribute('class','col 1 d-flex uf-flag', 'title', `${resultado.ieUf}`);
-          elementoUf.innerHTML = `<img width="40px" src="./img/icons-states/${resultado.ieUf}.svg">`;
+          //elementoUf.setAttribute('src',`./img/icons-states/${resultado.ieuf}.svg`);
+          elementoUf.setAttribute('class','col 1 d-flex uf-flag', 'title', `${resultado.ieuf}`);
+          elementoUf.innerHTML = `<img width="40px" src="./img/icons-states/${resultado.ieuf}.svg">`;
           subDivi.appendChild(elementoUf);
 
           //Construíndo inscrição estadual
           elementoIe = document.createElement('div');
           elementoIe.setAttribute('style','text-align: center;font-size: 18px','class','col-2');
-          elementoIe.innerHTML = `Inscrição Estadual ${resultado.ieUf} encontrada: <b>${resultado.ieNumber}</b>`;
+          elementoIe.innerHTML = `Inscrição Estadual ${resultado.ieuf} encontrada: <b>${resultado.ienumber}</b>`;
           subDivi.appendChild(elementoIe);
           console.log('sucesso');
     };
